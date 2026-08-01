@@ -95,7 +95,7 @@ def evaluate(
                 "shading_image must be either a PIL.Image.Image or a torch.Tensor."
             )
 
-        batch["albedo"] = shading_tensor
+        batch["shading"] = shading_tensor
 
     # ------------------------------------------------------------------
     # Encode source image and generate output
