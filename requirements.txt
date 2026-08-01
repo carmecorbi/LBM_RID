@@ -3,3 +3,4 @@ Pillow
 torchvision>=0.20.0
 pydantic>=2.6.1
 PyYAML
+lpips==0.1.4
