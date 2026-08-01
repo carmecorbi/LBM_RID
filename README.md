@@ -11,17 +11,20 @@ This repository provides an inference pipeline for **LBM (Latent Bridge Matching
 * GPU inference with PyTorch.
 * Output saved as a PNG image.
 
-## Requirements
+## Setup 
 
-* Python 3.10+
-* PyTorch
-* CUDA-compatible GPU
-* torchvision
-* Pillow
-* diffusers
-* safetensors
-* huggingface_hub
-* PyYAML
+To be up and running, you need first to create a virtual env with at least python3.10 installed and activate it
+
+With venv
+```bash
+python3.10 -m venv envs/lbm-rid
+source envs/lbm-rid/bin/activate
+```
+With conda
+```
+conda create -n lbm-rid python=3.10
+conda activate lbm-rid
+```
 
 Install the required dependencies:
 
