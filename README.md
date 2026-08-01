@@ -106,17 +106,6 @@ The inference pipeline automatically:
 * Moves the model to the selected device.
 * Runs the model in evaluation mode.
 
-## Notes
-
-* GPU execution is recommended.
-* Images are automatically converted to RGB format.
-* The model internally processes images in the latent space using its VAE encoder and decoder.
-* The output image is automatically saved as a PNG file.
-
-## Citation
-
-If you use this repository in your research, please cite the corresponding LBM publication.
-
 ## License
 
 See the `LICENSE` file for licensing information.
