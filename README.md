@@ -2,14 +2,6 @@
 
 This repository provides an inference pipeline for **LBM (Latent Bridge Matching)** models. It enables single-image inference using a pretrained checkpoint and an additional conditioning image (e.g., shading or normals) to generate the desired output.
 
-## Features
-
-* Single-image inference.
-* Support for pretrained checkpoints.
-* Conditioning using an auxiliary image.
-* Automatic model loading from configuration files.
-* GPU inference with PyTorch.
-* Output saved as a PNG image.
 
 ## Setup 
 
