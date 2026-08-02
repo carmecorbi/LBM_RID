@@ -6,3 +6,4 @@ pydantic>=2.6.1
 PyYAML
 lpips==0.1.4
 diffusers==0.32.2
+lightning==2.5.0
