@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 from diffusers.schedulers import FlowMatchEulerDiscreteScheduler
 from tqdm import tqdm
-import torchvision.utils as vutils
 from ..base.base_model import BaseModel
 from ..embedders import ConditionerWrapper
 from ..unets import DiffusersUNet2DCondWrapper, DiffusersUNet2DWrapper
@@ -207,8 +206,6 @@ class LBMModel(BaseModel):
                 self.alpha,
             )
             # Reconstruction loss
-            
-           
             loss += self.pixel_loss_weight * ((self.alpha*pixel_loss) + ((1-self.alpha)*reconstruction_loss))
 
         else:
@@ -246,89 +243,6 @@ class LBMModel(BaseModel):
             raise NotImplementedError(
                 f"Loss type {self.latent_loss_type} not implemented"
             )
-
-    def pixel_loss(self, prediction, model_input, valid_mask):
-
-        latent_crop = self.pixel_loss_max_size // self.vae.downsampling_factor
-        input_crop = self.pixel_loss_max_size
-
-        crop_h = max((prediction.shape[2] - latent_crop), 0)
-        crop_w = max((prediction.shape[3] - latent_crop), 0)
-
-        input_crop_h = max((model_input.shape[2] - self.pixel_loss_max_size), 0)
-        input_crop_w = max((model_input.shape[3] - self.pixel_loss_max_size), 0)
-
-        # image random cropping
-        if crop_h == 0:
-            offset_h = 0
-        else:
-            offset_h = torch.randint(0, crop_h, (1,)).item()
-
-        if crop_w == 0:
-            offset_w = 0
-        else:
-            offset_w = torch.randint(0, crop_w, (1,)).item()
-        input_offset_h = offset_h * self.vae.downsampling_factor
-        input_offset_w = offset_w * self.vae.downsampling_factor
-
-        prediction = prediction[
-            :,
-            :,
-            crop_h
-            - offset_h : min(crop_h - offset_h + latent_crop, prediction.shape[2]),
-            crop_w
-            - offset_w : min(crop_w - offset_w + latent_crop, prediction.shape[3]),
-        ]
-
-        model_input = model_input[
-            :,
-            :,
-            input_crop_h
-            - input_offset_h : min(
-                input_crop_h - input_offset_h + input_crop, model_input.shape[2]
-            ),
-            input_crop_w
-            - input_offset_w : min(
-                input_crop_w - input_offset_w + input_crop, model_input.shape[3]
-            ),
-        ]
-
-        valid_mask = valid_mask[
-            :,
-            :,
-            input_crop_h
-            - input_offset_h : min(
-                input_crop_h - input_offset_h + input_crop, valid_mask.shape[2]
-            ),
-            input_crop_w
-            - input_offset_w : min(
-                input_crop_w - input_offset_w + input_crop, valid_mask.shape[3]
-            ),
-        ]
-
-        decoded_prediction = self.vae.decode(prediction).clamp(-1, 1)
-
-        if self.pixel_loss_type == "l2":
-            return torch.mean(
-                (
-                    (decoded_prediction * valid_mask - model_input * valid_mask) ** 2
-                ).reshape(model_input.shape[0], -1),
-                1,
-            )
-
-        elif self.pixel_loss_type == "l1":
-            return torch.mean(
-                torch.abs(
-                    decoded_prediction * valid_mask - model_input * valid_mask
-                ).reshape(model_input.shape[0], -1),
-                1,
-            )
-
-        elif self.pixel_loss_type == "lpips":
-            return self.lpips_loss(
-                decoded_prediction * valid_mask, model_input * valid_mask
-            ).mean()
-
     def pixel_and_reconstruction_loss(
     self,
     prediction,      # latent
@@ -412,10 +326,6 @@ class LBMModel(BaseModel):
                 reconstructed = decoded_prediction * (image/target_pixels)
             else:
                 reconstructed = decoded_prediction * shading + residual
-            
-
-        
-
             if self.recons_loss_type == "l2":
                 reconstruction_loss = torch.mean(
                     ((reconstructed * valid_mask - image * valid_mask) ** 2)
@@ -517,10 +427,7 @@ class LBMModel(BaseModel):
         while len(sigma.shape) < n_dim:
             sigma = sigma.unsqueeze(-1)
         return sigma
-
-
     
-
     @torch.no_grad()
     def sample(
         self,
@@ -533,15 +440,9 @@ class LBMModel(BaseModel):
         self.sampling_noise_scheduler.set_timesteps(
             sigmas=np.linspace(1, 1 / num_steps, num_steps)
         )
-        print(f"[SAMPLE] num_steps={num_steps}")
-        print(f"[SAMPLE] timesteps={self.sampling_noise_scheduler.timesteps.tolist()}")
-        print(f"[SAMPLE] sigmas={np.linspace(1, 1/num_steps, num_steps).tolist()}")
-
+        
         sample = z
-        print(f"[SAMPLE] input z shape={z.shape}, dtype={z.dtype}, "
-          f"min={z.min():.3f}, max={z.max():.3f}")
-
-
+       
         # Get conditioning
         conditioning = self._get_conditioning(
             conditioner_inputs, set_ucg_rate_zero=True, device=z.device
@@ -559,8 +460,6 @@ class LBMModel(BaseModel):
         for i, t in tqdm(
             enumerate(self.sampling_noise_scheduler.timesteps), disable=not verbose
         ):
-            print(f"\n[STEP {i}] t={t.item():.4f}")
-            print(f"  sample before denoiser: min={sample.min():.3f}, max={sample.max():.3f}, mean={sample.mean():.3f}")
             if hasattr(self.sampling_noise_scheduler, "scale_model_input"):
                 denoiser_input = self.sampling_noise_scheduler.scale_model_input(
                     sample, t
@@ -575,13 +474,11 @@ class LBMModel(BaseModel):
                 timestep=t.to(z.device).repeat(denoiser_input.shape[0]),
                 conditioning=conditioning,
             )
-            print(f"  pred (drift vθ):        min={pred.min():.3f}, max={pred.max():.3f}, mean={pred.mean():.3f}")
 
             # Make one step on the reverse diffusion process
             sample = self.sampling_noise_scheduler.step(
                 pred, t, sample, return_dict=False
             )[0]
-            print(f"  sample after Euler step: min={sample.min():.3f}, max={sample.max():.3f}, mean={sample.mean():.3f}")
             if i < len(self.sampling_noise_scheduler.timesteps) - 1:
                 timestep = (
                     self.sampling_noise_scheduler.timesteps[i + 1]
@@ -591,16 +488,12 @@ class LBMModel(BaseModel):
                 sigmas = self._get_sigmas(
                     self.sampling_noise_scheduler, timestep, n_dim=4, device=z.device
                 )
-                print(f"  bridge_noise_sigma={self.bridge_noise_sigma}, sigmas={sigmas.flatten()[0].item():.4f}")
-                print(f"  sample after bridge: min={sample.min():.3f}, max={sample.max():.3f}")
                 sample = sample + self.bridge_noise_sigma * (
                     sigmas * (1.0 - sigmas)
                 ) ** 0.5 * torch.randn_like(sample)
                 sample = sample.to(z.dtype)
-            print(f"\n[DECODE] latent final: min={sample.min():.3f}, max={sample.max():.3f}, mean={sample.mean():.3f}")
         if self.vae is not None:
             decoded_sample = self.vae.decode(sample)
-            print(f"[DECODE] output: shape={decoded_sample.shape}, min={decoded_sample.min():.3f}, max={decoded_sample.max():.3f}")
 
         else:
             decoded_sample = sample
