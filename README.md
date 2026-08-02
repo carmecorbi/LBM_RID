@@ -18,6 +18,7 @@ conda activate lbm-rid
 ```
 
 Install dependencies
+
 Once the environment is activated, install the required packages:
 
 ```bash
