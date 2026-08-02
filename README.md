@@ -96,19 +96,6 @@ The generated image is stored in the specified output directory using the follow
 ```text
 <input_filename>_output.png
 ```
-
-## Model Loading
-
-The inference pipeline automatically:
-
-* Loads the model configuration from the provided model directory.
-* Restores pretrained weights from either:
-
-  * a `.safetensors` file, or
-  * a `.ckpt` checkpoint.
-* Moves the model to the selected device.
-* Runs the model in evaluation mode.
-
 ## License
 
 See the `LICENSE` file for licensing information.
