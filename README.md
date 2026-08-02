@@ -4,7 +4,7 @@ This repository provides an inference pipeline for **LBM (Latent Bridge Matching
 
 
 ## Setup 
-before running the inference code, create and activate a Python environment (Python 3.10 or later is recommended). 
+Before running the inference code, create and activate a Python environment (Python 3.10 or later is recommended). 
 
 With venv
 ```bash
