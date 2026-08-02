@@ -4,8 +4,7 @@ This repository provides an inference pipeline for **LBM (Latent Bridge Matching
 
 
 ## Setup 
-
-To be up and running, you need first to create a virtual env with at least python3.10 installed and activate it
+before running the inference code, create and activate a Python environment (Python 3.10 or later is recommended). 
 
 With venv
 ```bash
@@ -18,7 +17,8 @@ conda create -n lbm-rid python=3.10
 conda activate lbm-rid
 ```
 
-Install the required dependencies:
+Install dependencies
+Once the environment is activated, install the required packages:
 
 ```bash
 pip install -r requirements.txt
@@ -39,29 +39,16 @@ src/
 ```
 
 ## Running Inference
-
 Execute the inference script as follows:
 
 ```bash
-python examples/inference/inference_single_image.py \
+python -m examples.inference.inference_single_image 
     --image_path <input_image> \
     --shading_cond_dir <conditioning_image> \
     --model_dir <model_directory> \
     --checkpoint <checkpoint_path> \
     --output_root <output_directory>
 ```
-
-### Example
-
-```bash
-python examples/inference/inference_single_image.py \
-    --image_path assets/input.png \
-    --shading_cond_dir assets/shading.png \
-    --model_dir checkpoints/model \
-    --checkpoint checkpoints/model.ckpt \
-    --output_root outputs
-```
-
 ## Command Line Arguments
 
 | Argument             | Description                                               |
