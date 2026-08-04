@@ -25,7 +25,7 @@ Once the environment is activated, install the required packages:
 pip install -r requirements.txt
 ```
 
-## Repository Structure
+## Structure
 
 ```text
 examples/
