@@ -37,7 +37,9 @@ pip install -r requirements.txt
 examples/
 └── inference/
     └── inference_single_image.py
-
+models/
+└── lbm/
+    ├── config.yaml
 src/
 └── lbm/
     ├── inference/
