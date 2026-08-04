@@ -4,7 +4,13 @@ This repository provides an inference pipeline for **LBM (Latent Bridge Matching
 
 
 ## Setup 
-Before running the inference code, create and activate a Python environment (Python 3.10 or later is recommended). 
+First, clone the repository and move into the project directory:
+
+```bash
+git clone https://github.com/carmecorbi/LBM_RID.git
+cd LBM_RID
+```
+Before running the inference code, create and activate a Python environment (Python 3.10 or later is recommended).
 
 With venv
 ```bash
