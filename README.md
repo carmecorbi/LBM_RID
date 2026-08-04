@@ -45,8 +45,8 @@ src/
     └── ...
 ```
 
-## Running Inference
-Execute the inference script as follows:
+## Inference
+Run the inference script:
 
 ```bash
 python -m examples.inference.inference_single_image 
@@ -56,32 +56,17 @@ python -m examples.inference.inference_single_image
     --checkpoint <checkpoint_path> \
     --output_root <output_directory>
 ```
-## Command Line Arguments
+### Required Arguments
 
 | Argument             | Description                                               |
 | -------------------- | --------------------------------------------------------- |
 | `--image_path`       | Path to the source RGB image.                             |
-| `--shading_cond_dir` | Path to the conditioning image used during inference.     |
-| `--model_dir`        | Directory containing the model configuration and weights. |
+| `--shading_cond_dir` | Path to the conditioning image.                           |
+| `--model_dir`        | Directory containing the model configuration.             |
 | `--checkpoint`       | Path to the model checkpoint (.ckpt).                     |
 | `--output_root`      | Directory where the generated image will be saved.        |
 | `--inference_steps`  | Number of inference/sampling steps (default: `1`).        |
 
-## Input
-
-The inference script expects:
-
-* A source RGB image.
-* A conditioning image (for example, shading or surface normals).
-* A pretrained LBM model.
-
-## Output
-
-The generated image is stored in the specified output directory using the following naming convention:
-
-```text
-<input_filename>_output.png
-```
 ## License
 
 See the `LICENSE` file for licensing information.
