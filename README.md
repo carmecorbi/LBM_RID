@@ -64,7 +64,7 @@ python -m examples.inference.inference_single_image
 | -------------------- | --------------------------------------------------------- |
 | `--image_path`       | Path to the source RGB image.                             |
 | `--shading_cond_dir` | Path to the conditioning image.                           |
-| `--model_dir`        | Directory containing the model config. (`config.yaml`).   |
+| `--model_dir`        | Directory containing the model config (`config.yaml`).   |
 | `--checkpoint`       | Path to the model checkpoint (.ckpt).                     |
 | `--output_root`      | Directory where the generated image will be saved.        |
 | `--inference_steps`  | Number of inference/sampling steps (default: `1`).        |
